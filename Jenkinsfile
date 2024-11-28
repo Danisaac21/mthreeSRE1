@@ -21,7 +21,7 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Simulating artifact creation...'
-                sh '''
+                bat '''
                     echo "This is a simulated artifact" > fake-file.txt
                     zip fake-artifact.zip fake-file.txt
                 '''

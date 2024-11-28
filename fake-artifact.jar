@@ -20,25 +20,29 @@ pipeline {
 
         stage('Build') {
             steps {
-                echo 'Building application using Maven...'
-                sh 'mvn clean package' // Use Maven to clean and package the project
+                echo 'Simulating artifact creation...'
+        sh '''
+            echo "This is a simulated artifact" > fake-file.txt
+            zip fake-artifact.zip fake-file.txt
+        '''
             }
         }
 
         stage('Archive Artifact') {
             steps {
                 echo 'Archiving build artifact...'
-                archiveArtifacts artifacts: "**/target/${ARTIFACT_NAME}", allowEmptyArchive: false
+                archiveArtifacts artifacts: "fake-artifact.zip", allowEmptyArchive: false
             }
         }
 
         stage('Deploy with Ansible') {
             steps {
-                echo 'Deploying to target servers with Ansible...'
-                ansiblePlaybook(
-                    playbook: PLAYBOOK_FILE,
-                    inventory: INVENTORY_FILE,
-                    extras: '-e "artifact_name=${ARTIFACT_NAME}"'
+                 echo 'Simulating deployment to local system...'
+        sh '''
+            mkdir -p /tmp/deployment
+            cp target/${ARTIFACT_NAME}.zip /tmp/deployment/
+            echo "Simulated deployment complete!"
+        '''
                 )
             }
         }

@@ -1,0 +1,55 @@
+pipeline {
+    agent any
+
+    environment {
+        GIT_REPO = 'https://github.com/Danisaac21/mthreeSRE1.git'
+        ARTIFACT_NAME = 'fake-artifact'
+        INVENTORY_FILE = 'your-inventory.ini' // Path to your Ansible inventory file
+        PLAYBOOK_FILE = 'your-playbook.yml' // Path to your Ansible playbook file
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                echo 'Checking out source code...'
+                git branch: 'main', 
+                    credentialsId: '166b7cc0-41a1-4e8e-93d4-ecb1f00ac5b6', 
+                    url: GIT_REPO
+            }
+        }
+
+        stage('Build') {
+            steps {
+                echo 'Building application using Maven...'
+                sh 'mvn clean package' // Use Maven to clean and package the project
+            }
+        }
+
+        stage('Archive Artifact') {
+            steps {
+                echo 'Archiving build artifact...'
+                archiveArtifacts artifacts: "**/target/${ARTIFACT_NAME}", allowEmptyArchive: false
+            }
+        }
+
+        stage('Deploy with Ansible') {
+            steps {
+                echo 'Deploying to target servers with Ansible...'
+                ansiblePlaybook(
+                    playbook: PLAYBOOK_FILE,
+                    inventory: INVENTORY_FILE,
+                    extras: '-e "artifact_name=${ARTIFACT_NAME}"'
+                )
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Deployment completed successfully!'
+        }
+        failure {
+            echo 'Deployment failed. Check logs for details.'
+        }
+    }
+}

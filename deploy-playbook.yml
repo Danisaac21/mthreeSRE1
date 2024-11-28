@@ -1,0 +1,19 @@
+---
+- name: Simulate artifact deployment
+  hosts: localhost
+  gather_facts: no
+
+  tasks:
+    - name: Ensure deployment directory exists
+      file:
+        path: /tmp/deployment
+        state: directory
+
+    - name: Simulate copying artifact
+      copy:
+        src: /tmp/fake-artifact.zip
+        dest: /tmp/deployment/fake-artifact.zip
+
+    - name: Notify deployment complete
+      debug:
+        msg: "Deployment complete! Artifact copied to /tmp/deployment"

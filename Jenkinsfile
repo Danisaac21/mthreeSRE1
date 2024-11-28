@@ -4,8 +4,8 @@ pipeline {
     environment {
         GIT_REPO = 'https://github.com/Danisaac21/mthreeSRE1.git'
         ARTIFACT_NAME = 'fake-artifact'
-        INVENTORY_FILE = 'your-inventory.ini' // Path to your Ansible inventory file
-        PLAYBOOK_FILE = 'your-playbook.yml' // Path to your Ansible playbook file
+        PLAYBOOK_FILE = 'deploy.yml'
+        INVENTORY_FILE = 'localhost'
     }
 
     stages {
@@ -21,28 +21,26 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Simulating artifact creation...'
-        sh '''
-            echo "This is a simulated artifact" > fake-file.txt
-            zip fake-artifact.zip fake-file.txt
-        '''
+                sh '''
+                    echo "This is a simulated artifact" > fake-file.txt
+                    zip fake-artifact.zip fake-file.txt
+                '''
             }
         }
 
         stage('Archive Artifact') {
             steps {
                 echo 'Archiving build artifact...'
-                archiveArtifacts artifacts: "fake-artifact.zip", allowEmptyArchive: false
+                archiveArtifacts artifacts: "**/target/${ARTIFACT_NAME}.zip", allowEmptyArchive: false
             }
         }
 
         stage('Deploy with Ansible') {
             steps {
-                 echo 'Simulating deployment to local system...'
-        sh '''
-            mkdir -p /tmp/deployment
-            cp target/${ARTIFACT_NAME}.zip /tmp/deployment/
-            echo "Simulated deployment complete!"
-        '''
+                echo 'Deploying to target servers with Ansible...'
+                ansiblePlaybook(
+                    playbook: PLAYBOOK_FILE,
+                    inventory: INVENTORY_FILE
                 )
             }
         }

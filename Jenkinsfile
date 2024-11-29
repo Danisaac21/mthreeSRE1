@@ -18,7 +18,7 @@ pipeline {
             }
         }
 
-       stage('Build') {
+        stage('Build') {
             steps {
                 echo 'Simulating artifact creation...'
                 bat '''
@@ -35,16 +35,17 @@ pipeline {
             }
         }
 
-
         stage('Deploy with Ansible') {
             steps {
                 script {
-                    bat 'wsl ansible-playbook /mnt/c/Users/Daniel\\ Long/.jenkins/workspace/Deployment_Pipeline/deploy-playbook.yml -i /mnt/c/Users/Daniel\\ Long/.jenkins/workspace/Deployment_Pipeline/inventory'
+                    bat '''
+                        cp fake-artifact.zip /tmp/
+                        wsl ansible-playbook "/mnt/c/Users/Daniel Long/.jenkins/workspace/Deployment_Pipeline/deploy-playbook.yml" -i "/mnt/c/Users/Daniel Long/.jenkins/workspace/Deployment_Pipeline/inventory"
+                    '''
                 }
             }
         }
-
-        }
+    }
 
     post {
         success {

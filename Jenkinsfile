@@ -42,13 +42,11 @@ pipeline {
             steps {
                 script {
                     echo 'Deploying with Ansible...'
-        
-                    // Copy artifact to the correct WSL path
+
                     bat """
                         copy ${ARTIFACT_PATH} C:\\wsl\\Ubuntu-20.04\\mnt\\c\\tmp\\${ARTIFACT_PATH}
                     """
-        
-                    // Run the Ansible playbook from WSL
+
                     bat """
                         wsl ansible-playbook "${PLAYBOOK_PATH}" -i "${INVENTORY_PATH}"
                     """

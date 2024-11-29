@@ -1,58 +1,76 @@
 pipeline {
     agent any
-
     environment {
-        GIT_REPO = 'https://github.com/Danisaac21/mthreeSRE1.git'
-        ARTIFACT_NAME = 'fake-artifact'
-        PLAYBOOK_FILE = '.jenkins/workspace/Deployment_Pipeline/deploy-playbook.yml'
-        INVENTORY_FILE = 'localhost'
+        WSL_PATH = '/mnt/c/Users/Daniel Long/.jenkins/workspace/Deployment_Pipeline'
+        WSL_TMP_PATH = '/mnt/c/tmp'
+        ARTIFACT_PATH = 'fake-artifact.zip'
+        PLAYBOOK_PATH = '/mnt/c/Users/Daniel Long/.jenkins/workspace/Deployment_Pipeline/deploy-playbook.yml'
+        INVENTORY_PATH = '/mnt/c/Users/Daniel Long/.jenkins/workspace/Deployment_Pipeline/inventory'
     }
-
     stages {
+        stage('Declarative: Checkout SCM') {
+            steps {
+                checkout scm
+            }
+        }
+
         stage('Checkout') {
             steps {
                 echo 'Checking out source code...'
-                git branch: 'main', 
-                    credentialsId: '166b7cc0-41a1-4e8e-93d4-ecb1f00ac5b6', 
-                    url: GIT_REPO
+                script {
+                    git url: 'https://github.com/Danisaac21/mthreeSRE1.git', branch: 'main', credentialsId: '166b7cc0-41a1-4e8e-93d4-ecb1f00ac5b6'
+                }
             }
         }
 
         stage('Build') {
             steps {
                 echo 'Simulating artifact creation...'
-                bat '''
-                    echo "This is a simulated artifact" > fake-file.txt
-                    "C:\\Program Files\\7-Zip\\7z.exe" a fake-artifact.zip fake-file.txt
-                '''
+                bat 'echo "This is a simulated artifact"  1>fake-file.txt'
+                bat '"C:\\Program Files\\7-Zip\\7z.exe" a ${ARTIFACT_PATH} fake-file.txt'
             }
         }
 
         stage('Archive Artifact') {
             steps {
                 echo 'Archiving build artifact...'
-                archiveArtifacts 'fake-artifact.zip'
+                archiveArtifacts artifacts: "${ARTIFACT_PATH}", allowEmptyArchive: true
             }
         }
 
         stage('Deploy with Ansible') {
             steps {
                 script {
-                    bat '''
-                        copy fake-artifact.zip C:\\wsl$\\Ubuntu-20.04\\tmp\\fake-artifact.zip
-                        wsl ansible-playbook "/mnt/c/Users/Daniel Long/.jenkins/workspace/Deployment_Pipeline/deploy-playbook.yml" -i "/mnt/c/Users/Daniel Long/.jenkins/workspace/Deployment_Pipeline/inventory"
-                    '''
+                    echo 'Deploying with Ansible...'
+
+                    // Copy artifact to WSL's /tmp directory
+                    bat """
+                        copy ${ARTIFACT_PATH} C:\\wsl$\\Ubuntu-20.04\\mnt\\c\\tmp\\${ARTIFACT_PATH}
+                    """
+
+                    // Run the Ansible playbook
+                    bat """
+                        wsl ansible-playbook "${PLAYBOOK_PATH}" -i "${INVENTORY_PATH}"
+                    """
                 }
             }
         }
-    }
 
+        stage('Declarative: Post Actions') {
+            steps {
+                echo 'Deployment failed. Check logs for details.'
+            }
+        }
+    }
     post {
+        always {
+            echo 'Pipeline finished.'
+        }
         success {
-            echo 'Deployment completed successfully!'
+            echo 'Pipeline was successful!'
         }
         failure {
-            echo 'Deployment failed. Check logs for details.'
+            echo 'Pipeline failed, please check logs for more details.'
         }
     }
 }

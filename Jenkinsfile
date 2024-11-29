@@ -25,16 +25,16 @@ pipeline {
                     echo "This is a simulated artifact" > fake-file.txt
                     "C:\\Program Files\\7-Zip\\7z.exe" a fake-artifact.zip fake-file.txt
                 '''
-    }
-}
-
+            }
+        }
 
         stage('Archive Artifact') {
             steps {
                 echo 'Archiving build artifact...'
-                archiveArtifacts artifacts: "**/target/${ARTIFACT_NAME}.zip", allowEmptyArchive: false
+                archiveArtifacts 'fake-artifact.zip'
             }
         }
+
 
         stage('Deploy with Ansible') {
             steps {

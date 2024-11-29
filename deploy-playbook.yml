@@ -11,7 +11,7 @@
 
     - name: Simulate copying artifact
       copy:
-        src: /tmp/fake-artifact.zip
+        src: /mnt/c/tmp/fake-artifact.zip
         dest: /tmp/deployment/fake-artifact.zip
 
     - name: Notify deployment complete

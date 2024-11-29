@@ -38,24 +38,24 @@ pipeline {
             }
         }
 
-       stage('Deploy with Ansible') {
+        stage('Deploy with Ansible') {
             steps {
                 script {
                     echo 'Deploying with Ansible...'
         
-                    // Properly escape $ and make sure the path is correct
+                    // Ensure the target directory exists before copying
                     bat """
+                        mkdir C:\\wsl\\Ubuntu-20.04\\mnt\\c\\tmp  // Create tmp directory if it does not exist
                         copy ${ARTIFACT_PATH} C:\\wsl\\Ubuntu-20.04\\mnt\\c\\tmp\\${ARTIFACT_PATH}
                     """
         
-                    // Run the Ansible playbook
+                    // Run the Ansible playbook from WSL
                     bat """
                         wsl ansible-playbook "${PLAYBOOK_PATH}" -i "${INVENTORY_PATH}"
                     """
                 }
             }
         }
-
 
         stage('Declarative: Post Actions') {
             steps {

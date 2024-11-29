@@ -38,16 +38,16 @@ pipeline {
             }
         }
 
-        stage('Deploy with Ansible') {
+       stage('Deploy with Ansible') {
             steps {
                 script {
                     echo 'Deploying with Ansible...'
-
-                    // Correctly escape the $ in the WSL path
+        
+                    // Properly escape $ and make sure the path is correct
                     bat """
-                        copy ${ARTIFACT_PATH} C:\\wsl\\\$\\Ubuntu-20.04\\mnt\\c\\tmp\\${ARTIFACT_PATH}
+                        copy ${ARTIFACT_PATH} C:\\wsl\\Ubuntu-20.04\\mnt\\c\\tmp\\${ARTIFACT_PATH}
                     """
-
+        
                     // Run the Ansible playbook
                     bat """
                         wsl ansible-playbook "${PLAYBOOK_PATH}" -i "${INVENTORY_PATH}"
@@ -55,6 +55,7 @@ pipeline {
                 }
             }
         }
+
 
         stage('Declarative: Post Actions') {
             steps {

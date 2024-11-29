@@ -39,7 +39,7 @@ pipeline {
             steps {
                 script {
                     bat '''
-                        cp fake-artifact.zip /tmp/
+                        copy fake-artifact.zip C:\\wsl$\\Ubuntu-20.04\\tmp\\fake-artifact.zip
                         wsl ansible-playbook "/mnt/c/Users/Daniel Long/.jenkins/workspace/Deployment_Pipeline/deploy-playbook.yml" -i "/mnt/c/Users/Daniel Long/.jenkins/workspace/Deployment_Pipeline/inventory"
                     '''
                 }

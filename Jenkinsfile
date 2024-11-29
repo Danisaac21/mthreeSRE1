@@ -43,11 +43,6 @@ pipeline {
                 script {
                     echo 'Deploying with Ansible...'
         
-                    // Ensure the target directory exists before copying
-                 //   bat """
-                   //     mkdir C:\\wsl\\Ubuntu-20.04\\mnt\\c\\tmp
-                   // """
-        
                     // Copy artifact to the correct WSL path
                     bat """
                         copy ${ARTIFACT_PATH} C:\\wsl\\Ubuntu-20.04\\mnt\\c\\tmp\\${ARTIFACT_PATH}

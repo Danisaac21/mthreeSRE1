@@ -4,7 +4,7 @@ pipeline {
     environment {
         GIT_REPO = 'https://github.com/Danisaac21/mthreeSRE1.git'
         ARTIFACT_NAME = 'fake-artifact'
-        PLAYBOOK_FILE = 'deploy-playbook.yml'
+        PLAYBOOK_FILE = '.jenkins/workspace/Deployment_Pipeline/deploy-playbook.yml'
         INVENTORY_FILE = 'localhost'
     }
 

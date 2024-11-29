@@ -38,12 +38,12 @@ pipeline {
 
         stage('Deploy with Ansible') {
             steps {
-                echo 'Deploying to target servers with Ansible...'
-                ansiblePlaybook(
-                    playbook: PLAYBOOK_FILE,
-                    inventory: INVENTORY_FILE
-                )
+                script {
+                    bat 'wsl ansible-playbook /mnt/c/Users/Daniel\\ Long/.jenkins/workspace/Deployment_Pipeline/deploy-playbook.yml -i /mnt/c/Users/Daniel\\ Long/.jenkins/workspace/Deployment_Pipeline/inventory'
+                }
             }
+        }
+
         }
     }
 

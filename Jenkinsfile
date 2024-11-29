@@ -45,7 +45,7 @@ pipeline {
 
                     // Copy artifact to WSL's /tmp directory
                     bat """
-                        copy ${ARTIFACT_PATH} C:\\wsl$\\Ubuntu-20.04\\mnt\\c\\tmp\\${ARTIFACT_PATH}
+                        copy ${ARTIFACT_PATH} C:\\wsl\\$\\Ubuntu-20.04\\mnt\\c\\tmp\\${ARTIFACT_PATH}
                     """
 
                     // Run the Ansible playbook

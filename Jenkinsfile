@@ -18,15 +18,16 @@ pipeline {
             }
         }
 
-        stage('Build') {
+       stage('Build') {
             steps {
                 echo 'Simulating artifact creation...'
                 bat '''
                     echo "This is a simulated artifact" > fake-file.txt
-                    bat 'C:\\Program Files\\7-Zip\\7z.exe a fake-artifact.zip fake-file.txt'
+                    "C:\\Program Files\\7-Zip\\7z.exe" a fake-artifact.zip fake-file.txt
                 '''
-            }
-        }
+    }
+}
+
 
         stage('Archive Artifact') {
             steps {
